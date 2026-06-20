@@ -1,0 +1,132 @@
+{{ define "main" }}
+{{/*
+  摄影详情页 — 沉浸式全屏展示
+  暗底 + 照片居中 + 极简描述
+*/}}
+
+<style>
+.photo-viewer {
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.photo-viewer img {
+    max-width: 100%;
+    max-height: 75vh;
+    object-fit: contain;
+    border-radius: 2px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+.photo-info {
+    text-align: center;
+    margin-top: 32px;
+    max-width: 500px;
+}
+.photo-info h1 {
+    font-size: 1rem;
+    font-weight: 400;
+    color: #666;
+    margin: 0 0 8px;
+}
+.photo-info .date {
+    font-size: 0.8rem;
+    color: #aaa;
+}
+.photo-info .description {
+    font-size: 0.88rem;
+    color: #777;
+    margin-top: 12px;
+    line-height: 1.6;
+}
+
+/* 多图模式 */
+.photo-series {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px 20px 80px;
+}
+.photo-series-item {
+    margin-bottom: 80px;
+    text-align: center;
+}
+.photo-series-item img {
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 2px;
+}
+
+.photo-back {
+    display: inline-block;
+    margin-top: 40px;
+    font-size: 0.8rem;
+    color: #999;
+    text-decoration: none;
+    letter-spacing: 0.05em;
+}
+.photo-back:hover {
+    color: #333;
+}
+
+@media (prefers-color-scheme: dark) {
+    .photo-viewer img { box-shadow: 0 4px 24px rgba(0,0,0,0.4); }
+    .photo-info h1 { color: #aaa; }
+    .photo-info .description { color: #888; }
+    .photo-back { color: #666; }
+    .photo-back:hover { color: #ccc; }
+}
+</style>
+
+{{ $images := .Resources.Match "*.{jpg,jpeg,png,webp}" }}
+{{ $count := len $images }}
+
+{{ if le $count 1 }}
+{{/* 单图展示 */}}
+<div class="photo-viewer">
+    {{ with index $images 0 }}
+        {{ $full := .Resize "2000x" }}
+        <img src="{{ $full.RelPermalink }}" alt="{{ $.Title }}">
+    {{ end }}
+    <div class="photo-info">
+        <h1>{{ .Title }}</h1>
+        <div class="date">{{ .Date.Format "2006.01.02" }}</div>
+        {{ with .Description }}<div class="description">{{ . }}</div>{{ end }}
+        {{ if .Content }}<div class="description">{{ .Content }}</div>{{ end }}
+    </div>
+    <a href="/images/" class="photo-back">← 返回</a>
+</div>
+
+{{ else }}
+{{/* 多图系列 */}}
+<div class="photo-series">
+    <div class="photo-info" style="margin-bottom: 60px; text-align: center;">
+        <h1>{{ .Title }}</h1>
+        <div class="date">{{ .Date.Format "2006.01.02" }} · {{ $count }} 张</div>
+        {{ with .Description }}<div class="description">{{ . }}</div>{{ end }}
+    </div>
+
+    {{ range $images }}
+    <div class="photo-series-item">
+        {{ $full := .Resize "2000x" }}
+        <img src="{{ $full.RelPermalink }}" alt="{{ .Title }}" loading="lazy">
+    </div>
+    {{ end }}
+
+    {{ if .Content }}
+    <div class="photo-info" style="margin-top: 40px; text-align: center;">
+        <div class="description">{{ .Content }}</div>
+    </div>
+    {{ end }}
+
+    <div style="text-align: center;">
+        <a href="/images/" class="photo-back">← 返回</a>
+    </div>
+</div>
+{{ end }}
+
+{{ end }}

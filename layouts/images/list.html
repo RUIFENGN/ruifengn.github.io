@@ -1,0 +1,114 @@
+{{ define "main" }}
+{{/*
+  摄影列表页 — 美术馆白盒子风格
+  每张照片给予充分的呼吸空间，垂直单列滚动，极简信息
+*/}}
+
+<style>
+.gallery-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px 20px 80px;
+}
+.gallery-header {
+    text-align: center;
+    margin-bottom: 80px;
+}
+.gallery-header h1 {
+    font-size: 1.2rem;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #999;
+}
+.gallery-item {
+    margin-bottom: 100px;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+.gallery-item:last-child {
+    margin-bottom: 40px;
+}
+.gallery-image-wrapper {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 2px;
+}
+.gallery-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: opacity 0.3s;
+}
+.gallery-image:hover {
+    opacity: 0.92;
+}
+.gallery-caption {
+    margin-top: 16px;
+    text-align: center;
+}
+.gallery-caption-title {
+    font-size: 0.85rem;
+    color: #888;
+    font-weight: 400;
+}
+.gallery-caption-date {
+    font-size: 0.75rem;
+    color: #bbb;
+    margin-top: 4px;
+}
+
+/* 合集（多图文章）标识 */
+.gallery-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    background: #f0f0f0;
+    color: #666;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-top: 6px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .gallery-header h1 { color: #666; }
+    .gallery-caption-title { color: #777; }
+    .gallery-caption-date { color: #555; }
+    .gallery-badge { background: #2a2a2a; color: #888; }
+}
+</style>
+
+<div class="gallery-container">
+
+    <div class="gallery-header">
+        <h1>摄影</h1>
+    </div>
+
+    {{ range .Pages }}
+    <a href="{{ .RelPermalink }}" class="gallery-item">
+        <div class="gallery-image-wrapper">
+            {{ $img := .Resources.GetMatch "*.{jpg,jpeg,png,webp}" }}
+            {{ if $img }}
+                {{ $resized := $img.Resize "1600x" }}
+                <img class="gallery-image" src="{{ $resized.RelPermalink }}" alt="{{ .Title }}" loading="lazy">
+            {{ else if .Params.featured_image }}
+                {{ $img2 := .Resources.GetMatch (.Params.featured_image) }}
+                {{ if $img2 }}
+                    {{ $resized2 := $img2.Resize "1600x" }}
+                    <img class="gallery-image" src="{{ $resized2.RelPermalink }}" alt="{{ .Title }}" loading="lazy">
+                {{ end }}
+            {{ end }}
+        </div>
+        <div class="gallery-caption">
+            <div class="gallery-caption-title">{{ .Title }}</div>
+            <div class="gallery-caption-date">{{ .Date.Format "2006.01.02" }}</div>
+            {{ if gt (len (.Resources.Match "*.{jpg,jpeg,png,webp}")) 1 }}
+                <span class="gallery-badge">{{ len (.Resources.Match "*.{jpg,jpeg,png,webp}") }} 张</span>
+            {{ end }}
+        </div>
+    </a>
+    {{ end }}
+
+</div>
+
+{{ end }}

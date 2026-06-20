@@ -1,0 +1,79 @@
+baseURL = "https://RUIFENGN.github.io/"
+DefaultContentLanguage = "zh"   # 主题界面文案走中文（en/fr/zh/zh-hant/...）
+title = "阿东"
+theme = "diary"
+
+# Hugo 0.158+ 按语言节点配置 locale，避免顶层 languageCode 的 deprecation
+[languages.zh]
+  locale     = "zh-CN"
+  weight     = 1
+  label      = "中文"   # Hugo 0.158+ 重命名自 languageName
+
+# 让 RSS 以全文输出，便于 index.xml 完整重建
+rssLimit = 50
+
+[params]
+  # 顶部副标题
+  subtitle = "尽管大胆的写些幼稚的东西"
+
+  # 与原站 og:site_name / og:description 保持一致
+  title = "阿东的博客"
+  description = "尽管大胆的写些幼稚的东西"
+
+  # OpenGraph & Twitter Card
+  enableOpenGraph = true
+  enableTwitterCards = true
+
+  # 微软 Clarity（与原线上一致，按需替换或删除）
+  clarity = "abcdefghzd"
+
+  # 评论系统按需开启（gitalk/giscus/utterances/disqus...）
+  enableGitalk = false
+  enableGiscus = false
+
+  customCSS = []
+  customJS  = []
+
+# 作者信息（Hugo 0.124+ 已移除顶级 [author]，改走 params；主题 RSS 模板需读 email/name）
+[params.author]
+  name  = "阿东"
+  email = ""
+
+[permalinks]
+  wrt    = "/wrt/:slug/"
+  tech   = "/tech/:slug/"
+  images = "/images/:slug/"
+  food   = "/food/:slug/"
+
+[markup]
+  [markup.goldmark.renderer]
+    unsafe = true
+  [markup.tableOfContents]
+    startLevel = 1
+    endLevel   = 4
+
+[menu]
+  [[menu.main]]
+    name   = "摄影"
+    url    = "/images/"
+    weight = 10
+  [[menu.main]]
+    name   = "写作"
+    url    = "/wrt/"
+    weight = 20
+  [[menu.main]]
+    name   = "技术"
+    url    = "/tech/"
+    weight = 30
+  [[menu.main]]
+    name   = "美食"
+    url    = "/food/"
+    weight = 40
+  [[menu.main]]
+    name   = "标签"
+    url    = "/tags/"
+    weight = 50
+
+[taxonomies]
+  tag      = "tags"
+  category = "categories"

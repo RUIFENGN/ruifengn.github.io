@@ -1,0 +1,34 @@
+{{- /*
+  Site-level override for hugo-theme-diary's index.rss.xml
+  Reason: Hugo v0.124+ removed `.Site.Author` and `.Site.LanguageCode` is deprecated since v0.158.
+  This file replaces those with `.Site.Params.author.*` and `.Site.Language.LanguageCode`.
+*/ -}}
+{{- printf "<?xml-stylesheet href=\"/rss.xsl\" type=\"text/xsl\"?>" | safeHTML }}
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>{{ if eq .Title .Site.Title }}{{ .Site.Title }}{{ else }}{{ with .Title }}{{.}} on {{ end }}{{ .Site.Title }}{{ end }}</title>
+    <link>{{ .Permalink }}</link>
+    <description>Recent content {{ if ne .Title .Site.Title }}{{ with .Title }}in {{.}} {{ end }}{{ end }}on {{ .Site.Title }}</description>
+    <generator>Hugo -- gohugo.io</generator>{{ with .Site.Language.Lang }}
+    <language>{{.}}</language>{{ end }}{{ with site.Params.author }}{{ with .email }}
+    <managingEditor>{{.}}{{ with site.Params.author.name }} ({{.}}){{ end }}</managingEditor>
+    <webMaster>{{.}}{{ with site.Params.author.name }} ({{.}}){{ end }}</webMaster>{{ end }}{{ end }}{{ with site.Copyright }}
+    <copyright>{{.}}</copyright>{{ end }}{{ if not .Date.IsZero }}
+    <lastBuildDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</lastBuildDate>{{ end }}
+    {{ with .OutputFormats.Get "RSS" }}
+        {{ printf "<atom:link href=%q rel=\"self\" type=%q />" .Permalink .MediaType | safeHTML }}
+    {{ end }}
+    {{ range .Paginator.Pages }}
+    {{ if and (.IsPage) (.Params.date) }}
+        <item>
+        <title>{{ .Title }}</title>
+        <link>{{ .Permalink }}</link>
+        <pubDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</pubDate>
+        {{ with site.Params.author }}{{ with .email }}<author>{{.}}{{ with site.Params.author.name }} ({{.}}){{ end }}</author>{{ end }}{{ end }}
+        <guid>{{ .Permalink }}</guid>
+        <description>{{ .Site.Title }} {{ .Permalink }} - {{- .Content | html -}} - {{ .Permalink }} - {{ site.Copyright }}</description>
+        </item>
+    {{ end }}
+    {{ end }}
+  </channel>
+</rss>
